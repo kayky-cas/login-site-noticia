@@ -4,8 +4,8 @@ class Conexao {
 
     public static function getInstance(){
         if(!isset(self::$instance)){
-            self::$instance =new PDO(SGBD.":host=".HOST_DB.";dbname=".DB, USER_DB, PASS_DB);
+            self::$instance =new PDO(SGBD.":host=".HOST_DB.";dbname=".DB."",USER_DB,PASS_DB);
         }
-        return self::$instance;
+        return  self::$instance;
     }
 }

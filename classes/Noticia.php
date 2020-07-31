@@ -1,4 +1,5 @@
 <?php
+
 class Noticia{
     private $id;
     private $titulo;
@@ -54,25 +55,38 @@ class Noticia{
     }
 
     public function index(){
-        echo "Página inicial";
+        $this->listar();
     }
 
     public function listar(){
-        $sql = "
-            SELECT id_noticia, titulo, descricao, DATE_FORMAT(data_noticia, '%d/%m/%y') AS data,
-            (SELECT nome FROM usuario WHERE id_usuario=noticia.id_usuario) AS nome_autor
-            FROM noticia
-            ORDER BY id_noticia DESC LIMIT 5
-        ";
-        $conexao = Conexao::getInstance();
-        $resultado = $conexao->query($sql);
-        $noticias = null;
-        while ($noticia = $resultado->fetch(PDO::FETCH_OBJ)) {
-            $noticias[] = $noticia;
+        $conexao=Conexao::getInstance();
+        $sql="SELECT id, titulo, descricao, DATE_FORMAT(data, '%d/%m/%Y') AS data,
+        (SELECT nome FROM usuario WHERE id=noticia.usuario_id)AS nome_usuario 
+        FROM noticia
+        ORDER BY id DESC LIMIT 5";
+        
+        $resultado=$conexao->query($sql);
+        $noticias=null;
+
+        while($noticia=$resultado->fetch(PDO::FETCH_OBJ)){
+            $noticias[]=$noticia;
         }
-        include HOME_DIR."view/paginas/noticias/noticia.php";
+        
+        include HOME_DIR."view/paginas/noticias/noticias.php";
     }
 
+    public function ver($id){
+        $conexao=Conexao::getInstance();
+        $sql="SELECT id, titulo, descricao, DATE_FORMAT(data, '%d/%m/%Y') AS data,
+        (SELECT nome FROM usuario WHERE id=noticia.usuario_id)AS nome_usuario 
+        FROM noticia
+        WHERE id=".$id;
+
+        $resultado=$conexao->query($sql);
+        $noticia=$resultado->fetch(PDO::FETCH_OBJ);
+        include HOME_DIR."view/paginas/noticias/noticia.php";
+    }
+    
 
 
 }

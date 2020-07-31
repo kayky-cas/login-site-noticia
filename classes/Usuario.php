@@ -37,7 +37,17 @@ class Usuario{
 
 
     public function index(){
-        $this->listar();
+        if (!isset($_SESSION['email'])){
+            $this->login();
+        }
+        else {
+            $this->listar();
+        }
+
+    }
+
+    public function verificarLogin() {
+        include HOME_DIR."view/paginas/usuarios/verificar.php";
     }
 
     public function listar(){
@@ -48,24 +58,11 @@ class Usuario{
         include HOME_DIR."view/paginas/usuarios/form_usuario.php";
     }
 
-    public function salvar(){
-        echo "Pronto para salvar";
-        /* setar os dados do usuario */
-        if(isset($_POST["enviar"])){
-            if(empty($_POST["id"])){
-                $this->senha="info123";
+    public function salvar($emailTeste){
+        echo $emailTeste;
+        $conexao = Conexao::getInstance();
+        $sql = 'INSERT INTO usuario VALUES ()';
 
-            }else{
-                $sql="UPDATE usuario SET nome=".$_POST["nome"].", ".$_POST["email"];
-            }
-            
-
-        }
-       
-        
-        /* Salvar no banco de dados através da classe Conexao */
-        /* Gerar mensagem */
-        /*Recaregar a página. */
     }
 
     public function exibir($id){
@@ -73,10 +70,10 @@ class Usuario{
     }
 
     public function login(){
-
+        include HOME_DIR."view/paginas/usuarios/login.php";
     }
 
     public function autenticar(){
-
+        
     }
 }
