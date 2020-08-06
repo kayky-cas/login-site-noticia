@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
@@ -28,21 +27,17 @@
 			<?php 
 			if(isset($_SESSION['user'])){
 
-				echo "<a href='#' id='user-show'><i class='fas fa-user-check' style='font-size:24px'></i></a>";
-				echo "<div id='user-info' class='hide' >
-						<ul>
-						<li>"
-					.$_SESSION['user']['name'].
-						"</li>
-						<li>
-					<a href='".HOME_URI."/user/logout'><i class=' fas fa-sign-out-alt' style='font-size:24px'></i></a>
-					</li>
-				</div>";
-				}else{
-				echo "<a href='".HOME_URI."/user/login'><i class=' fas fa-sign-in-alt' style='font-size:24px'></i></a>";
+				echo
+                '
+                 <div>
+                    <span>'.$_SESSION['user']->nome.'</span>
+                    <a class="btn btn-danger btn-sm" href="'.HOME_URI.'usuario/logout">LOGOUT</a>
+                 </div>
+                ';
 			}
-
-			
+			else{
+				echo '<a class="btn btn-primary btn-sm" href="'.HOME_URI.'usuario/login">LOGIN</a>';
+			}
 			?>
 		</div>
 	</header>

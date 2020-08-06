@@ -84,10 +84,29 @@ class Noticia{
 
         $resultado=$conexao->query($sql);
         $noticia=$resultado->fetch(PDO::FETCH_OBJ);
+
+        include "Comentario.php";
+        $comentario = new Comentario();
+        $noticia->comentarios = $comentario->listar($noticia->id);
+
         include HOME_DIR."view/paginas/noticias/noticia.php";
     }
     
-
+    public function comentar(){
+        include "Comentario.php";
+        $comentario = new Comentario();
+        if ($comentario->salvar($_POST['id_noticia'], $_POST['comentario'], $_POST['id_usuario'])){
+            $msg['msg'] = "Comentário adicionado!";
+            $msg['class'] = "success";
+            $_SESSION['msg'] = $msg;
+        }
+        else {
+            $msg['msg'] = "Falha ao adicionar comentário!";
+            $msg['class'] = "danger";
+            $_SESSION['msg'] = $msg;
+        }
+        header("location:".HOME_URI."noticia/ver/".$_POST['id_noticia']);
+    }
 
 }
 

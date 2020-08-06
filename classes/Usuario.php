@@ -37,17 +37,13 @@ class Usuario{
 
 
     public function index(){
-        if (!isset($_SESSION['email'])){
+        if (!isset($_SESSION['user'])){
             $this->login();
         }
         else {
             $this->listar();
         }
 
-    }
-
-    public function verificarLogin() {
-        include HOME_DIR."view/paginas/usuarios/verificar.php";
     }
 
     public function listar(){
@@ -58,11 +54,19 @@ class Usuario{
         include HOME_DIR."view/paginas/usuarios/form_usuario.php";
     }
 
-    public function salvar($emailTeste){
-        echo $emailTeste;
+    public function salvar(){
         $conexao = Conexao::getInstance();
-        $sql = 'INSERT INTO usuario VALUES ()';
-
+        $sql = 'INSERT INTO usuario (nome, email, senha, primeira_vez, admin) VALUES ("'.$_POST['nomeSalvar'].'","'.$_POST['emailSalvar'].'","'.md5('basico_info').'",'.'1'.','.$_POST['funcaoSalvar'].')';
+        if ($conexao->query($sql)){
+//            $msg['msg'] = "Usuário salvo!";
+//            $msg['class'] = "primary";
+//            $_SESSION['msg'] = $msg;
+        }
+        else{
+//            $msg['msg'] = "Ocorreu um erro ao salvar usuário!";
+//            $msg['class'] = "danger";
+//            $_SESSION['msg'] = $msg;
+        }
     }
 
     public function exibir($id){
@@ -73,7 +77,78 @@ class Usuario{
         include HOME_DIR."view/paginas/usuarios/login.php";
     }
 
+    public function senha(){
+        include HOME_DIR."view/paginas/usuarios/senha_padrao.php";
+    }
+
+    public function deletar($id){
+        $conexao = Conexao::getInstance();
+        $sql = 'DELETE FROM usuario WHERE id_usuario='.$id;
+        if ($conexao->query($sql)){
+//            $msg['msg'] = "Usuário deletado!";
+//            $msg['class'] = "primary";
+//            $_SESSION['msg'] = $msg;
+        }
+        else{
+//            $msg['msg'] = "Ocorreu um erro ao deletar o usuário!";
+//            $msg['class'] = "danger";
+//            $_SESSION['msg'] = $msg;
+        }
+        $this->listar();
+    }
+
+    public function trocar_senha(){
+        $conexao = Conexao::getInstance();
+        $sql = 'UPDATE usuario SET senha = "'.md5($_POST['senhaTrocar']).'" WHERE id_usuario = '.$_SESSION['user']->id_usuario;
+        if ($conexao->query($sql)){
+            if ($_SESSION['user']->primeira_vez){
+                $sql = $sql = 'UPDATE usuario SET primeira_vez = '.'0'.' WHERE id_usuario = '.$_SESSION['user']->id_usuario;
+                $conexao->query($sql);
+                $_SESSION['user']->primeira_vez = 0;
+            }
+//            $msg['msg'] = "Senha alterada!";
+//            $msg['class'] = "primary";
+//            $_SESSION['msg'] = $msg;
+        }
+        else{
+//            $msg['msg'] = "Ocorreu um erro ao alterar a senha!";
+//            $msg['class'] = "danger";
+//            $_SESSION['msg'] = $msg;
+        }
+    }
+
     public function autenticar(){
-        
+        $conexao = Conexao::getInstance();
+        $email = $_POST['email'];
+        $sql = 'SELECT senha FROM usuario WHERE email="'.$email.'"';
+        $resultado = $conexao->query($sql);
+        $senha = $resultado->fetch(PDO::FETCH_OBJ);
+        if (!$senha) {
+            $msg['msg'] = "Usuário ou senha invalidos!";
+            $msg['class'] = "danger";
+            $_SESSION['msg'] = $msg;
+            $this->login();
+        }
+        else {
+            if (md5($_POST['senha']) === $senha->senha){
+                $sql = 'SELECT * FROM usuario WHERE email="'.$email.'"';
+                $resultado = $conexao->query($sql);
+                $_SESSION['user'] = $resultado->fetch(PDO::FETCH_OBJ);
+                if ($_SESSION['user']->primeira_vez){
+                    $this->senha();
+                }
+                if (!$_SESSION['user']->admin){
+                    header('Locate:'.HOME_URI);
+                }
+            }
+            else{
+                $this->login();
+            }
+        }
+    }
+
+    public function logout(){
+        session_destroy();
+        $this->login();
     }
 }
