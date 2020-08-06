@@ -136,10 +136,9 @@ class Usuario{
                 $_SESSION['user'] = $resultado->fetch(PDO::FETCH_OBJ);
                 if ($_SESSION['user']->primeira_vez){
                     $this->senha();
+
                 }
-                if (!$_SESSION['user']->admin){
-                    header('Locate:'.HOME_URI);
-                }
+                header('Location:'.HOME_URI);
             }
             else{
                 $this->login();
@@ -149,6 +148,6 @@ class Usuario{
 
     public function logout(){
         session_destroy();
-        $this->login();
+        header('Location:'.HOME_URI);
     }
 }

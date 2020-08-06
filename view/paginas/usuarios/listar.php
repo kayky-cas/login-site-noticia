@@ -2,7 +2,7 @@
 <main>
     <?php
         if ($_SESSION['user']->admin==2){
-            echo '<a href="'.HOME_URI.'usuario/criar" class="btn btn-primary">ADICIONAR USUÁRIO</a>';
+            echo '<a href="'.HOME_URI.'usuario/criar" class="btn btn-primary">ADICIONAR USUÁRIO(SÓ DISPONIVEIS PARA ADMINISTRADORES)</a>';
         }
     ?>
 <table class="table">
@@ -18,6 +18,7 @@
     <?php
         $conexao = Conexao::getInstance();
         $resultado = $conexao->query('SELECT * FROM usuario');
+        echo '<h3>Só professores e administradores podem ver os usuarios cadastrados, e só administradores podem excluir contas</h3>';
         while($usuarios = $resultado->fetch(PDO::FETCH_OBJ)){
             switch ($usuarios->admin){
                 case 0:
